@@ -1,4 +1,3 @@
-```lua
 local etNum = require(game.ReplicatedStorage.EternityNum)
 
 local DataStorageService = game:GetService("DataStoreService")
@@ -231,4 +230,3 @@ while true do
 	wait(120)
 
 end
-```
