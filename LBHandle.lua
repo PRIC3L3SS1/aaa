@@ -11,11 +11,6 @@ local TimeLeaderboard = DataStorageService:GetOrderedDataStore("TimeLeaderboard"
 local DonatorLeaderboard = DataStorageService:GetOrderedDataStore("DonatorLeaderboard")
 
 
---Donation handler
-
----------
-
-
 
 --Time Played Handler
 local function secConvert(num)
@@ -188,6 +183,7 @@ local function updateLeaderboard()
 end
 
 
+--LB Refresher
 while true do
 
 
