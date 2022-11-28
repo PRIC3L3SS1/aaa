@@ -26,9 +26,9 @@ local function secConvert(num)
 	else if hours > 0 then
 			num = hours.."H "..minutes.."M"
 		else if minutes > 0 then
-				num = minutes.."M "..math.floor(seconds).."S"
+				num = minutes.."M "..math.ceil(seconds).."S"
 			else if seconds > 0 then
-					num = math.floor(seconds).."S"
+					num = math.ceil(seconds).."S"
 				end
 
 			end
@@ -48,68 +48,70 @@ local function updateLeaderboard()
 		local LevelPage = Data:GetCurrentPage()
 		local GusPage = Data2:GetCurrentPage()
 		local TimePage = Data3:GetCurrentPage()
-			
 		
-			for Rank, data in ipairs(LevelPage) do
+		local Data = CashLeaderboard:GetSortedAsync(false, 50)
+		local LevelPage = Data:GetCurrentPage()
+		
+		for Rank, data in ipairs(LevelPage) do
 
 
 			local userName = game.Players:GetNameFromUserIdAsync(tonumber(data.key))
 			local Name = userName
 			local Level = data.value
 
-				local isOnLeaderboard = false
-				for i, v in pairs(game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
-					if v.Player.Text == Name then
-						isOnLeaderboard = true
-						break
-					end
-				end
-
-
-				local number = Level
-				local text = etNum.short((number))
-
-				if Level and isOnLeaderboard == false then
-					local newLbFrame = game.ReplicatedStorage.ScrollingFrame:WaitForChild("LeaderboardFrame1"):Clone()
-					newLbFrame.Player.Text = Name
-					newLbFrame.Level.Text = "Lv. "..text
-					newLbFrame.Rank.Text = "#"..Rank
-					newLbFrame.Position = UDim2.new(0, 0, newLbFrame.Position.Y.Scale + (.02 * #game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder:GetChildren()), 0)
-					newLbFrame.Parent = game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder
+			local isOnLeaderboard = false
+			for i, v in pairs(game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
+				if v.Player.Text == Name then
+					isOnLeaderboard = true
+					break
 				end
 			end
-		
-			for Rank, data in ipairs(GusPage) do
 
 
-				local userName = game.Players:GetNameFromUserIdAsync(tonumber(data.key))
-				local Name = userName
-				local Gus = data.value
+			local number = Level
+			local text = etNum.short((number))
+
+			if Level and isOnLeaderboard == false then
+				local newLbFrame = game.ReplicatedStorage.ScrollingFrame:WaitForChild("LeaderboardFrame1"):Clone()
+				newLbFrame.Player.Text = Name
+				newLbFrame.Level.Text = "Lv. "..text
+				newLbFrame.Rank.Text = "#"..Rank
+				newLbFrame.Position = UDim2.new(0, 0, newLbFrame.Position.Y.Scale + (.02 * #game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder:GetChildren()), 0)
+				newLbFrame.Parent = game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder
+			end
+		end
+
+		for Rank, data in ipairs(GusPage) do
+
+
+			local userName = game.Players:GetNameFromUserIdAsync(tonumber(data.key))
+			local Name = userName
+			local Gus = data.value
 
 
 
-				local isOnLeaderboard = false
-				for i, v in pairs(game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
-					if v.Player.Text == Name then
-						isOnLeaderboard = true
-						break
-					end
+			local isOnLeaderboard = false
+			for i, v in pairs(game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
+				if v.Player.Text == Name then
+					isOnLeaderboard = true
+					break
 				end
+			end
 
 			local number1 = Gus
 			local text1 = etNum.short(Gus)
 
-				if Gus and isOnLeaderboard == false and tonumber(number1) > 0 then
-					local newLbFrame = game.ReplicatedStorage.ScrollingFrame2:WaitForChild("LeaderboardFrame"):Clone()
-					newLbFrame.Player.Text = Name
-					newLbFrame.Gus.Text = text1
-					newLbFrame.Rank.Text = "#"..Rank
-					newLbFrame.Position = UDim2.new(0, 0, newLbFrame.Position.Y.Scale + (.02 * #game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder:GetChildren()), 0)
-					newLbFrame.Parent = game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder
-				end
+			if Gus and isOnLeaderboard == false and tonumber(number1) > 0 then
+				local newLbFrame = game.ReplicatedStorage.ScrollingFrame2:WaitForChild("LeaderboardFrame"):Clone()
+				newLbFrame.Player.Text = Name
+				newLbFrame.Gus.Text = text1
+				newLbFrame.Rank.Text = "#"..Rank
+				newLbFrame.Position = UDim2.new(0, 0, newLbFrame.Position.Y.Scale + (.02 * #game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder:GetChildren()), 0)
+				newLbFrame.Parent = game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder
 			end
-		
-			for Rank, data in ipairs(TimePage) do
+		end
+
+		for Rank, data in ipairs(TimePage) do
 
 
 			local userName = game.Players:GetNameFromUserIdAsync(tonumber(data.key))
@@ -147,33 +149,37 @@ local function updateLeaderboard()
 end
 
 while true do
-	
-	
-	
-	
+
+
+	local table = {
+		CashLeaderboard,
+		GusLeaderboard,
+		TimeLeaderboard,
+	}
+
+	local table2 = {
+		"Level",
+		"Gus2",
+		"timePlayed",
+	}
+
 	for _, player in pairs(game.Players:GetPlayers()) do
-		CashLeaderboard:SetAsync(player.UserId, player.Level.Value)
+		for i, v in ipairs(table, table2) do
+			table[i]:SetAsync(player.UserId, player[table2[i]].Value)
+		end
 	end
-	
-	for _, player in pairs(game.Players:GetPlayers()) do
-		GusLeaderboard:SetAsync(player.UserId, player.Gus2.Value)
-	end
-	
-	for _, player in pairs(game.Players:GetPlayers()) do
-		TimeLeaderboard:SetAsync(player.UserId, player.timePlayed.Value)
-	end
-	
-	
-	
-	
+
+
+
+
 	for _, frame in pairs (game.Workspace.LB.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
 		frame:Destroy()
 	end
-	
+
 	for _, frame in pairs (game.Workspace.LB2.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
 		frame:Destroy()
 	end
-	
+
 	for _, frame in pairs (game.Workspace.LB3.LeaderboardUI.ScrollingFrame.Holder:GetChildren()) do
 		frame:Destroy()
 	end
@@ -182,5 +188,5 @@ while true do
 	print("Updated!")
 
 	wait(30)
-	
+
 end
